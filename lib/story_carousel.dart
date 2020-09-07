@@ -19,26 +19,26 @@ class _StoryCarouselState extends State<StoryCarousel>
   }
 
   void _onHorizontalDragEnd(DragEndDetails details) {
-    double _kMinFlingVelocity = 10;
+    double _kMinFlingVelocity = 700;
 
     if (_controller.isDismissed || _controller.isCompleted) {
       return;
     }
     if (details.velocity.pixelsPerSecond.dx.abs() >= _kMinFlingVelocity) {
-      double visualVelocity = details.velocity.pixelsPerSecond.dx;
-
-      _controller.fling(velocity: -visualVelocity / deviceWidth);
-    } else if (_controller.value < 0.5) {
-      _controller.reverse();
-    } else {
+      if (details.velocity.pixelsPerSecond.dx > 0)
+        _controller.reverse();
+      else
+        _controller.forward();
+    } else if (_controller.value > 0.5)
       _controller.forward();
-    }
+    else
+      _controller.reverse();
   }
 
   @override
   void initState() {
     super.initState();
-    _duration = Duration(milliseconds: 500);
+    _duration = Duration(milliseconds: 400);
     _controller = AnimationController(vsync: this, duration: _duration);
     _animation = CurvedAnimation(
       parent: _controller,
