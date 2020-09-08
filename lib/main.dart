@@ -12,6 +12,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+        brightness: Brightness.dark,
         canvasColor: Colors.black,
         primaryColor: Colors.white,
         visualDensity: VisualDensity.adaptivePlatformDensity,
@@ -24,6 +25,8 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: StoryCarousel());
+    return Scaffold(
+      body: StoryCarousel(),
+    );
   }
 }

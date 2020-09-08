@@ -1,6 +1,7 @@
 import 'dart:math' show pi;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import 'story_indicator.dart';
 
@@ -74,23 +75,20 @@ class _StoryCarouselState extends State<StoryCarousel>
       child: Container(
         color: Theme.of(context).canvasColor,
         child: Center(
-          child: AspectRatio(
-            aspectRatio: 9 / 16,
-            child: LayoutBuilder(
-              builder: (_, size) => Stack(
-                children: [
-                  MainStory(
-                    width: size.maxWidth,
-                    animation: _animation,
-                    story: _storyController,
-                  ),
-                  RightStory(
-                    width: size.maxWidth,
-                    animation: _animation,
-                    story: _storyController,
-                  ),
-                ],
-              ),
+          child: LayoutBuilder(
+            builder: (_, size) => Stack(
+              children: [
+                MainStory(
+                  width: size.maxWidth,
+                  animation: _animation,
+                  story: _storyController,
+                ),
+                RightStory(
+                  width: size.maxWidth,
+                  animation: _animation,
+                  story: _storyController,
+                ),
+              ],
             ),
           ),
         ),
@@ -132,19 +130,28 @@ class BaseStory extends StatelessWidget {
               ..rotateY(pi / 2 * (dragAmount - xOffset) / width),
             child: Stack(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: image,
-                ),
-                Positioned(
-                  top: 0,
-                  width: width,
-                  child: AnimatedBuilder(
-                    animation: story,
-                    builder: (_, __) => StoryIndicator(
-                      segmentCount: 2,
-                      activeIndex: 1,
-                      value: story.value,
+                Center(
+                  child: AspectRatio(
+                    aspectRatio: 9 / 16,
+                    child: Stack(
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: image,
+                        ),
+                        Positioned(
+                          top: 0,
+                          width: width,
+                          child: AnimatedBuilder(
+                            animation: story,
+                            builder: (_, __) => StoryIndicator(
+                              segmentCount: 2,
+                              activeIndex: 1,
+                              value: story.value,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -231,52 +238,46 @@ class _MessageBoxState extends State<MessageBox> {
       padding: EdgeInsets.all(14),
       child: Material(
         color: Colors.transparent,
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: Colors.grey.shade400,
+        child: Row(
+          children: [
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.grey.shade400,
+                  ),
+                  borderRadius: BorderRadius.circular(28),
+                ),
+                child: TextField(
+                  minLines: 1,
+                  maxLines: 5,
+                  controller: _messageController,
+                  textInputAction: TextInputAction.newline,
+                  decoration: InputDecoration(
+                    hintText: 'Message...',
+                    isDense: true,
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                  ),
+                  style: Theme.of(context).textTheme.bodyText2,
+                ),
+              ),
             ),
-            borderRadius: BorderRadius.circular(28),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: TextField(
-                    minLines: 1,
-                    maxLines: 5,
-                    controller: _messageController,
-                    textInputAction: TextInputAction.newline,
-                    decoration: InputDecoration(
-                      hintText: 'Message...',
-                      isDense: true,
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 4,
-                      ),
-                    ),
-                    style: Theme.of(context).textTheme.bodyText2,
-                  ),
+            GestureDetector(
+              onTap: _sendMessage,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: SvgPicture.asset(
+                  'assets/send.svg',
+                  width: 24,
                 ),
               ),
-              GestureDetector(
-                onTap: _sendMessage,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    'Send',
-                    style: TextStyle(
-                      color: Colors.blue,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
