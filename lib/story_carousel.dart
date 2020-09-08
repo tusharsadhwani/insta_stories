@@ -2,48 +2,56 @@ import 'dart:math' show pi;
 
 import 'package:flutter/material.dart';
 
+import 'story_indicator.dart';
+
 class StoryCarousel extends StatefulWidget {
   @override
   _StoryCarouselState createState() => _StoryCarouselState();
 }
 
 class _StoryCarouselState extends State<StoryCarousel>
-    with SingleTickerProviderStateMixin {
-  AnimationController _controller;
+    with TickerProviderStateMixin {
+  AnimationController _carouselController;
+  AnimationController _storyController;
   Animation _animation;
   Duration _duration;
   double deviceWidth;
 
   void _onHorizontalDragUpdate(DragUpdateDetails details) {
-    _controller.value += -details.primaryDelta / deviceWidth;
+    _carouselController.value += -details.primaryDelta / deviceWidth;
   }
 
   void _onHorizontalDragEnd(DragEndDetails details) {
     double _kMinFlingVelocity = 700;
 
-    if (_controller.isDismissed || _controller.isCompleted) {
+    if (_carouselController.isDismissed || _carouselController.isCompleted) {
       return;
     }
     if (details.velocity.pixelsPerSecond.dx.abs() >= _kMinFlingVelocity) {
       if (details.velocity.pixelsPerSecond.dx > 0)
-        _controller.reverse();
+        _carouselController.reverse();
       else
-        _controller.forward();
-    } else if (_controller.value > 0.5)
-      _controller.forward();
+        _carouselController.forward();
+    } else if (_carouselController.value > 0.5)
+      _carouselController.forward();
     else
-      _controller.reverse();
+      _carouselController.reverse();
   }
 
   @override
   void initState() {
     super.initState();
     _duration = Duration(milliseconds: 400);
-    _controller = AnimationController(vsync: this, duration: _duration);
+    _carouselController = AnimationController(vsync: this, duration: _duration);
     _animation = CurvedAnimation(
-      parent: _controller,
+      parent: _carouselController,
       curve: Curves.easeInOutQuad,
     );
+    _storyController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 3000),
+    );
+    _storyController.forward();
   }
 
   @override
@@ -54,7 +62,7 @@ class _StoryCarouselState extends State<StoryCarousel>
 
   @override
   void dispose() {
-    _controller.dispose();
+    _carouselController.dispose();
     super.dispose();
   }
 
@@ -72,12 +80,14 @@ class _StoryCarouselState extends State<StoryCarousel>
               builder: (_, size) => Stack(
                 children: [
                   MainStory(
-                    animation: _animation,
                     width: size.maxWidth,
+                    animation: _animation,
+                    story: _storyController,
                   ),
                   RightStory(
-                    animation: _animation,
                     width: size.maxWidth,
+                    animation: _animation,
+                    story: _storyController,
                   ),
                 ],
               ),
@@ -93,6 +103,7 @@ class BaseStory extends StatelessWidget {
   const BaseStory({
     Key key,
     @required this.animation,
+    @required this.story,
     @required this.width,
     @required this.image,
     @required this.alignment,
@@ -100,6 +111,7 @@ class BaseStory extends StatelessWidget {
   }) : super(key: key);
 
   final Animation animation;
+  final Animation story;
   final double width;
   final double xOffset;
   final Alignment alignment;
@@ -125,6 +137,18 @@ class BaseStory extends StatelessWidget {
                   child: image,
                 ),
                 Positioned(
+                  top: 0,
+                  width: width,
+                  child: AnimatedBuilder(
+                    animation: story,
+                    builder: (_, __) => StoryIndicator(
+                      segmentCount: 2,
+                      activeIndex: 1,
+                      value: story.value,
+                    ),
+                  ),
+                ),
+                Positioned(
                   bottom: 0,
                   width: width,
                   child: MessageBox((_) {}),
@@ -142,16 +166,19 @@ class MainStory extends StatelessWidget {
   const MainStory({
     Key key,
     @required this.animation,
+    @required this.story,
     @required this.width,
   }) : super(key: key);
 
   final Animation animation;
+  final Animation story;
   final double width;
 
   @override
   Widget build(BuildContext context) {
     return BaseStory(
       animation: animation,
+      story: story,
       width: width,
       alignment: Alignment.centerRight,
       image: Image.asset('assets/1.jpg'),
@@ -163,16 +190,19 @@ class RightStory extends StatelessWidget {
   const RightStory({
     Key key,
     @required this.animation,
+    @required this.story,
     @required this.width,
   }) : super(key: key);
 
   final Animation animation;
+  final Animation story;
   final double width;
 
   @override
   Widget build(BuildContext context) {
     return BaseStory(
       animation: animation,
+      story: story,
       width: width,
       xOffset: width,
       alignment: Alignment.centerLeft,
