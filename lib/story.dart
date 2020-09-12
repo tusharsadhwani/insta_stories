@@ -98,37 +98,31 @@ class _BaseStoryState extends State<BaseStory>
               ..rotateY(pi / 2 * (dragAmount - widget.xOffset) / widget.width),
             child: Stack(
               children: [
-                Center(
-                  child: AspectRatio(
-                    aspectRatio: 9 / 16,
-                    child: GestureDetector(
-                      onTapUp: handleStoryTap,
-                      child: Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: widget.images[activeIndex],
-                          ),
-                          Positioned(
-                            top: 0,
-                            width: widget.width,
-                            child: AnimatedBuilder(
-                              animation: _storyController,
-                              builder: (_, __) => StoryIndicator(
-                                segmentCount: segmentCount,
-                                activeIndex: activeIndex,
-                                value: _storyController.value,
-                              ),
-                            ),
-                          ),
-                        ],
+                GestureDetector(
+                  onTapUp: handleStoryTap,
+                  child: Stack(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: widget.images[activeIndex],
                       ),
-                    ),
+                      Positioned(
+                        top: 0,
+                        width: widget.width,
+                        child: AnimatedBuilder(
+                          animation: _storyController,
+                          builder: (_, __) => StoryIndicator(
+                            segmentCount: segmentCount,
+                            activeIndex: activeIndex,
+                            value: _storyController.value,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                Positioned(
-                  bottom: 0,
-                  width: widget.width,
+                Align(
+                  alignment: Alignment.bottomCenter,
                   child: MessageBox((_) {}),
                 ),
               ],

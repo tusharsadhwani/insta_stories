@@ -74,27 +74,30 @@ class _StoryCarouselState extends State<StoryCarousel>
       child: Container(
         color: Theme.of(context).canvasColor,
         child: Center(
-          child: LayoutBuilder(
-            builder: (_, size) => Stack(
-              children: [
-                MainStory(
-                  width: size.maxWidth,
-                  animation: _animation,
-                  images: [
-                    Image.asset('assets/1.jpg'),
-                    Image.asset('assets/2.jpg'),
-                  ],
-                  prevCarousel: prevCarousel,
-                  nextCarousel: nextCarousel,
-                ),
-                RightStory(
-                  width: size.maxWidth,
-                  animation: _animation,
-                  images: [Image.asset('assets/3.jpg')],
-                  prevCarousel: prevCarousel,
-                  nextCarousel: nextCarousel,
-                ),
-              ],
+          child: AspectRatio(
+            aspectRatio: 9 / 16,
+            child: LayoutBuilder(
+              builder: (_, size) => Stack(
+                children: [
+                  MainStory(
+                    width: size.maxWidth,
+                    animation: _animation,
+                    images: [
+                      Image.asset('assets/1.jpg'),
+                      Image.asset('assets/2.jpg'),
+                    ],
+                    prevCarousel: prevCarousel,
+                    nextCarousel: nextCarousel,
+                  ),
+                  RightStory(
+                    width: size.maxWidth,
+                    animation: _animation,
+                    images: [Image.asset('assets/3.jpg')],
+                    prevCarousel: prevCarousel,
+                    nextCarousel: nextCarousel,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
