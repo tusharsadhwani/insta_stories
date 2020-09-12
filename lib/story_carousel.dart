@@ -35,6 +35,14 @@ class _StoryCarouselState extends State<StoryCarousel>
       _carouselController.reverse();
   }
 
+  void nextCarousel() {
+    _carouselController.forward();
+  }
+
+  void prevCarousel() {
+    _carouselController.reverse();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -76,11 +84,15 @@ class _StoryCarouselState extends State<StoryCarousel>
                     Image.asset('assets/1.jpg'),
                     Image.asset('assets/2.jpg'),
                   ],
+                  prevCarousel: prevCarousel,
+                  nextCarousel: nextCarousel,
                 ),
                 RightStory(
                   width: size.maxWidth,
                   animation: _animation,
                   images: [Image.asset('assets/3.jpg')],
+                  prevCarousel: prevCarousel,
+                  nextCarousel: nextCarousel,
                 ),
               ],
             ),

@@ -13,6 +13,8 @@ class BaseStory extends StatefulWidget {
     @required this.width,
     @required this.images,
     @required this.alignment,
+    @required this.prevCarousel,
+    @required this.nextCarousel,
     this.xOffset = 0,
   }) : super(key: key);
 
@@ -21,6 +23,8 @@ class BaseStory extends StatefulWidget {
   final double xOffset;
   final Alignment alignment;
   final List<Image> images;
+  final VoidCallback prevCarousel;
+  final VoidCallback nextCarousel;
 
   @override
   _BaseStoryState createState() => _BaseStoryState();
@@ -39,6 +43,8 @@ class _BaseStoryState extends State<BaseStory>
         activeIndex++;
         _storyController.reset();
         _storyController.forward();
+      } else {
+        widget.nextCarousel();
       }
     });
   }
@@ -49,6 +55,8 @@ class _BaseStoryState extends State<BaseStory>
         activeIndex--;
         _storyController.reset();
         _storyController.forward();
+      } else {
+        widget.prevCarousel();
       }
     });
   }
@@ -138,11 +146,14 @@ class MainStory extends StatelessWidget {
     @required this.animation,
     @required this.width,
     @required this.images,
+    @required this.prevCarousel,
+    @required this.nextCarousel,
   }) : super(key: key);
 
   final Animation animation;
   final double width;
   final List<Image> images;
+  final VoidCallback prevCarousel, nextCarousel;
 
   @override
   Widget build(BuildContext context) {
@@ -151,6 +162,8 @@ class MainStory extends StatelessWidget {
       width: width,
       alignment: Alignment.centerRight,
       images: images,
+      prevCarousel: prevCarousel,
+      nextCarousel: nextCarousel,
     );
   }
 }
@@ -161,11 +174,14 @@ class RightStory extends StatelessWidget {
     @required this.animation,
     @required this.width,
     @required this.images,
+    @required this.prevCarousel,
+    @required this.nextCarousel,
   }) : super(key: key);
 
   final Animation animation;
   final double width;
   final List<Image> images;
+  final VoidCallback prevCarousel, nextCarousel;
 
   @override
   Widget build(BuildContext context) {
@@ -175,6 +191,8 @@ class RightStory extends StatelessWidget {
       xOffset: width,
       alignment: Alignment.centerLeft,
       images: images,
+      prevCarousel: prevCarousel,
+      nextCarousel: nextCarousel,
     );
   }
 }
