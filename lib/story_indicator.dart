@@ -8,8 +8,8 @@ class StoryIndicator extends StatelessWidget {
     @required this.value,
   }) : super(key: key);
 
-  final double segmentCount;
-  final double activeIndex;
+  final int segmentCount;
+  final int activeIndex;
   final double value;
   final _height = 1.5;
 

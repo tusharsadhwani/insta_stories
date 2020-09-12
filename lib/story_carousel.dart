@@ -11,9 +11,8 @@ class StoryCarousel extends StatefulWidget {
 }
 
 class _StoryCarouselState extends State<StoryCarousel>
-    with TickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
   AnimationController _carouselController;
-  AnimationController _storyController;
   Animation _animation;
   Duration _duration;
   double deviceWidth;
@@ -48,11 +47,6 @@ class _StoryCarouselState extends State<StoryCarousel>
       parent: _carouselController,
       curve: Curves.easeInOutQuad,
     );
-    _storyController = AnimationController(
-      vsync: this,
-      duration: Duration(milliseconds: 3000),
-    );
-    _storyController.forward();
   }
 
   @override
@@ -81,12 +75,15 @@ class _StoryCarouselState extends State<StoryCarousel>
                 MainStory(
                   width: size.maxWidth,
                   animation: _animation,
-                  story: _storyController,
+                  images: [
+                    Image.asset('assets/1.jpg'),
+                    Image.asset('assets/2.jpg'),
+                  ],
                 ),
                 RightStory(
                   width: size.maxWidth,
                   animation: _animation,
-                  story: _storyController,
+                  images: [Image.asset('assets/3.jpg')],
                 ),
               ],
             ),
@@ -97,37 +94,69 @@ class _StoryCarouselState extends State<StoryCarousel>
   }
 }
 
-class BaseStory extends StatelessWidget {
+class BaseStory extends StatefulWidget {
   const BaseStory({
     Key key,
     @required this.animation,
-    @required this.story,
     @required this.width,
-    @required this.image,
+    @required this.images,
     @required this.alignment,
     this.xOffset = 0,
   }) : super(key: key);
 
   final Animation animation;
-  final Animation story;
   final double width;
   final double xOffset;
   final Alignment alignment;
-  final Image image;
+  final List<Image> images;
+
+  @override
+  _BaseStoryState createState() => _BaseStoryState();
+}
+
+class _BaseStoryState extends State<BaseStory>
+    with SingleTickerProviderStateMixin {
+  AnimationController _storyController;
+
+  int segmentCount;
+  int activeIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _storyController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: 3000),
+    );
+    _storyController.forward();
+    _storyController.addListener(() {
+      if (_storyController.isCompleted) {
+        setState(() {
+          if (activeIndex < segmentCount - 1) {
+            activeIndex++;
+            _storyController.reset();
+            _storyController.forward();
+          }
+        });
+      }
+    });
+    segmentCount = widget.images.length;
+    activeIndex = 0;
+  }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: animation,
+      animation: widget.animation,
       builder: (_, __) {
-        double dragAmount = animation.value * width;
+        double dragAmount = widget.animation.value * widget.width;
         return Transform.translate(
-          offset: Offset(xOffset - dragAmount, 0),
+          offset: Offset(widget.xOffset - dragAmount, 0),
           child: Transform(
-            alignment: alignment,
+            alignment: widget.alignment,
             transform: Matrix4.identity()
               ..setEntry(3, 2, 0.001)
-              ..rotateY(pi / 2 * (dragAmount - xOffset) / width),
+              ..rotateY(pi / 2 * (dragAmount - widget.xOffset) / widget.width),
             child: Stack(
               children: [
                 Center(
@@ -137,17 +166,17 @@ class BaseStory extends StatelessWidget {
                       children: [
                         ClipRRect(
                           borderRadius: BorderRadius.circular(8),
-                          child: image,
+                          child: widget.images[activeIndex],
                         ),
                         Positioned(
                           top: 0,
-                          width: width,
+                          width: widget.width,
                           child: AnimatedBuilder(
-                            animation: story,
+                            animation: _storyController,
                             builder: (_, __) => StoryIndicator(
-                              segmentCount: 2,
-                              activeIndex: 1,
-                              value: story.value,
+                              segmentCount: segmentCount,
+                              activeIndex: activeIndex,
+                              value: _storyController.value,
                             ),
                           ),
                         ),
@@ -157,7 +186,7 @@ class BaseStory extends StatelessWidget {
                 ),
                 Positioned(
                   bottom: 0,
-                  width: width,
+                  width: widget.width,
                   child: MessageBox((_) {}),
                 ),
               ],
@@ -173,22 +202,21 @@ class MainStory extends StatelessWidget {
   const MainStory({
     Key key,
     @required this.animation,
-    @required this.story,
     @required this.width,
+    @required this.images,
   }) : super(key: key);
 
   final Animation animation;
-  final Animation story;
   final double width;
+  final List<Image> images;
 
   @override
   Widget build(BuildContext context) {
     return BaseStory(
       animation: animation,
-      story: story,
       width: width,
       alignment: Alignment.centerRight,
-      image: Image.asset('assets/1.jpg'),
+      images: images,
     );
   }
 }
@@ -197,23 +225,22 @@ class RightStory extends StatelessWidget {
   const RightStory({
     Key key,
     @required this.animation,
-    @required this.story,
     @required this.width,
+    @required this.images,
   }) : super(key: key);
 
   final Animation animation;
-  final Animation story;
   final double width;
+  final List<Image> images;
 
   @override
   Widget build(BuildContext context) {
     return BaseStory(
       animation: animation,
-      story: story,
       width: width,
       xOffset: width,
       alignment: Alignment.centerLeft,
-      image: Image.asset('assets/2.jpg'),
+      images: images,
     );
   }
 }
