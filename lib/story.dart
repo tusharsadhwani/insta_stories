@@ -33,6 +33,33 @@ class _BaseStoryState extends State<BaseStory>
   int segmentCount;
   int activeIndex;
 
+  void nextStory() {
+    setState(() {
+      if (activeIndex < segmentCount - 1) {
+        activeIndex++;
+        _storyController.reset();
+        _storyController.forward();
+      }
+    });
+  }
+
+  void prevStory() {
+    setState(() {
+      if (activeIndex > 0) {
+        activeIndex--;
+        _storyController.reset();
+        _storyController.forward();
+      }
+    });
+  }
+
+  void handleStoryTap(TapUpDetails details) {
+    if (details.localPosition.dx / widget.width < 0.2)
+      prevStory();
+    else
+      nextStory();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -42,15 +69,7 @@ class _BaseStoryState extends State<BaseStory>
     );
     _storyController.forward();
     _storyController.addListener(() {
-      if (_storyController.isCompleted) {
-        setState(() {
-          if (activeIndex < segmentCount - 1) {
-            activeIndex++;
-            _storyController.reset();
-            _storyController.forward();
-          }
-        });
-      }
+      if (_storyController.isCompleted) nextStory();
     });
     segmentCount = widget.images.length;
     activeIndex = 0;
@@ -75,7 +94,7 @@ class _BaseStoryState extends State<BaseStory>
                   child: AspectRatio(
                     aspectRatio: 9 / 16,
                     child: GestureDetector(
-                      onTap: () => print('tapped'),
+                      onTapUp: handleStoryTap,
                       child: Stack(
                         children: [
                           ClipRRect(
@@ -214,7 +233,7 @@ class _MessageBoxState extends State<MessageBox> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: kIsWeb
-                    ? SizedBox.shrink()
+                    ? Icon(Icons.send)
                     : SvgPicture.asset(
                         'assets/send.svg',
                         width: 24,
