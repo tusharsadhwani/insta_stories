@@ -1,16 +1,10 @@
 # insta_stories
 
-A new Flutter project.
+A recreation of Instagram's stories. Works on mobile, web and desktop.
 
-## Getting Started
+> Note: Some functionality is work in progress
 
-This project is a starting point for a Flutter application.
+## Demo:
 
-A few resources to get you started if this is your first Flutter project:
+![Demo GIF](https://user-images.githubusercontent.com/43412083/119687986-3c71d700-be65-11eb-9848-14bf936eafe9.gif)
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
